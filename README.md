@@ -256,3 +256,24 @@ Useful links:
 - 0 = 0.4 us high, 0.85 us low
   
 - 1 = 0.8 us high, 0.45 us low
+  
+
+### LED Control
+
+To control one diode we need to send **24-bits**.
+
+| G7... | ...G0 | R7... | ..R0 | B7... | ...B0 |
+| --- | --- | --- | --- | --- | --- |
+
+- 8-bit GREEN
+  
+- 8-bit RED
+  
+- 8-bit BLUE
+  
+
+**First, G7 is populated (HIGH bit is sent at first).**
+
+Sending `10000000 00000000 00000000` places 1 to G7 and every other is 0.
+
+For example sending `11111111 00000000 00000000` turns the LED green.
