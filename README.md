@@ -214,9 +214,7 @@ GPIO (general purpose i/o) :)
 
 W taki sposób ustawiamy **LOW** na pinie:
 
-Stała (constant value) (0x3FF44008) nie mieści się na 12-bitach, tzn. nie możemy użyć **movi**, używamy **l32r**:
-
-[c++ - What does a dangerous relocation error mean? - Stack Overflow](https://stackoverflow.com/questions/19532826/what-does-a-dangerous-relocation-error-mean)
+Stała (constant value) (0x3FF44008) nie mieści się na 12-bitach, tzn. nie możemy użyć **movi**, używamy **l32r**: [c++ - What does a dangerous relocation error mean? - Stack Overflow](https://stackoverflow.com/questions/19532826/what-does-a-dangerous-relocation-error-mean)
 
 ```
 .text
