@@ -23,15 +23,13 @@ idf_component_register(SRCS "main.c" "onewiredriver.S" INCLUDE_DIRS ".")
 
 Handbook i cala dokumentacja:
 
-- <mark>[DOC1-strona] </mark> http://loboris.eu/ESP32/Xtensa_lx%20Overview%20handbook.pdf
+- **<mark>[DOC1-page] </mark>** http://loboris.eu/ESP32/Xtensa_lx%20Overview%20handbook.pdf
   
-- https://medium.com/@bayotosho/xtensa-lx7-assembly-walkthrough-by-example-c43f529bdeb1
+- **<mark>[DOC2-page]</mark>** https://dl.espressif.com/github_assets/espressif/xtensa-isa-doc/releases/download/latest/Xtensa.pdf
   
-- <mark>[DOC2-strona]</mark> https://dl.espressif.com/github_assets/espressif/xtensa-isa-doc/releases/download/latest/Xtensa.pdf
+- [Demystifying Xtensa ISA](https://sachin0x18.github.io/posts/demystifying-xtensa-isa/) - Explained WindowRegisters
   
-- [Demystifying Xtensa ISA | /dev/null](https://sachin0x18.github.io/posts/demystifying-xtensa-isa/) **Dość dobrze wyjaśnione WindoRegisters**
-  
-- https://medium.com/@bayotosho/xtensa-lx7-assembly-walkthrough-by-example-c43f529bdeb1 Assembly Walkthrough
+- [Xtensa Assembly Walkthrough](https://medium.com/@bayotosho/xtensa-lx7-assembly-walkthrough-by-example-c43f529bdeb1)
   
 
 ## W asm **0x0** (hex) = **0** (dec), nie rozroznia #0 i 0:
@@ -48,7 +46,7 @@ Handbook i cala dokumentacja:
   
 - `sub a13, a14, a15` -> **a13 = a14 - a15**
   
-- `l32r a15, LED_PIN`-> load **literal** LED_PIN (constant value) into **a15**. Jeżeli stała (constant value) nie mieści się na **12-bitach**, tzn. nie możemy użyć **movi** to używamy **l32r** [c++ - What does a dangerous relocation error mean? - Stack Overflow](https://stackoverflow.com/questions/19532826/what-does-a-dangerous-relocation-error-mean)
+- `l32r a15, LED_PIN`-> load **literal** LED_PIN (constant value) into **a15**. Jeżeli stała (constant value) nie mieści się na **12-bitach**, tzn. nie możemy użyć **movi** to używamy **l32r** [What does a dangerous relocation error mean? - Stack Overflow](https://stackoverflow.com/questions/19532826/what-does-a-dangerous-relocation-error-mean)
   
 
 ## Budowa rejestrów (w przypadku kiedy wywołujemy inną funkcję z asm)
@@ -66,15 +64,15 @@ Handbook i cala dokumentacja:
 
 Przykładowa funkcja w asm i odwołanie z C:
 
-- [GitHub - technosf/XtensaAsmPOC: Xtensa Asm from Arduino Core Proof Of Concept](https://github.com/technosf/XtensaAsmPOC)
+- [Example function in ASM + C/C++](https://github.com/technosf/XtensaAsmPOC)
 
-#### **Przekazywanie do funkcji:**
+### **Przekazywanie do funkcji:**
 
 Pierwsze 6 argumentów jest przekazywane przez rejestry **(od a2 do a7)**, a reszta argumentów na stosie.
 
 ~~Z moich obserwacji wynika, że pierwsze dwa argumenty to: **a7, a3~~**
 
-#### **Zwracane z funkcji**
+### **Zwracane z funkcji**
 
 Zwracane są w rejestrach **(od a2 do a5)**, gdy trzeba więcej to ten co wywołuje przekazuje wskaźnik do miejsca, które potem wywołana funkcja zapełnia.
 
@@ -82,22 +80,22 @@ Z moich obserwacji wynika, że standardowe zwracanie odbywa się przez **a2**
 
 ## Funkcje w ASM 2 - wywoływane z C/C++
 
-#### **Każda funkcja, która chcemy wywołać z C/C++ zawiera**
+### **Każda funkcja, która chcemy wywołać z C/C++ zawiera**
 
 - `.global nazwa_funkcji` pozwala na `extern` z C/C++
   
 - `.align 4` <mark>TODO</mark>
   
-  Dokładne wyjaśnienie tutaj: [assembly - what is the meaning of align an the start of a section? - Stack Overflow](https://stackoverflow.com/questions/11277652/what-is-the-meaning-of-align-an-the-start-of-a-section)
+  Dokładne wyjaśnienie tutaj: [what is the meaning of align - Stack Overflow](https://stackoverflow.com/questions/11277652/what-is-the-meaning-of-align-an-the-start-of-a-section)
   
-- `entry a1, 32` ma za zadanie allokować **SP** dla funkcji oraz przesunąć okno rejestru o zadaną wartość <mark>[DOC2-7]</mark>
+- `entry a1, 32` ma za zadanie allokować **SP** dla funkcji oraz przesunąć okno rejestru o zadaną wartość **<mark>[DOC2-7]</mark>**
   
-- `retw` wraca i dekrementuje rejestr WindowBase <mark>[DOC2-6]</mark>
+- `retw` wraca i dekrementuje rejestr WindowBase **<mark>[DOC2-6]</mark>**
   
 
 **UWAGA!** Jeżeli funkcja zawiera `entry a1, 32` to nie można jej wywołać z innej funckji z asemblera!
 
-#### Przykładowe funkcje
+### Przykładowe funkcje
 
 1. `extern void mwait(void);` **<- w C/C++ (returns void, void args)**
   
@@ -113,7 +111,7 @@ Z moich obserwacji wynika, że standardowe zwracanie odbywa się przez **a2**
   
 2. `extern uint32_t mwait(uint32_t, uint32_t);` **<- w C/C++(returns uint, uint args)**
   
-  Zwracamy dane do a2 <mark>[DOC1-99]</mark>
+  Zwracamy dane do a2 **<mark>[DOC1-99]</mark>**.
   
   ```
   .text
@@ -130,7 +128,7 @@ Z moich obserwacji wynika, że standardowe zwracanie odbywa się przez **a2**
   ```
   
 
-#### How to call it from C/C++
+### How to call it from C/C++
 
 ```
 #include <stdio.h>
@@ -146,7 +144,7 @@ void app_main() {
 
 **UWAGA!** Jeżeli wywołujemy funkcję (z ASM), która jest w ASM to ta **NIE** może zawierać `entry a1, 32`.
 
-#### Przykład:
+### Przykład:
 
 **Caller (ta, która wywołuje):**
 
@@ -160,7 +158,6 @@ caller:
     entry a1, 32
     
     call4 callee        // for now the only option i found
-                        // call4 so a4 = a0 for callee
                         // return address in a4
     retw
 ```
@@ -192,14 +189,14 @@ void app_main() {
 
 GPIO (general purpose i/o) :)
 
-**Linki ogólne:**
+Useful links:
 
-- https://esp32.com/viewtopic.php?t=8826&start=10 l32r przykład
+- [l32r example](https://esp32.com/viewtopic.php?t=8826&start=10)
   
-- [esp32_highint5_gpio/highint5.S at master · darthcloud/esp32_highint5_gpio · GitHub](https://github.com/darthcloud/esp32_highint5_gpio/blob/master/main/highint5.S) movi przykład
+- [movi przykład](https://github.com/darthcloud/esp32_highint5_gpio/blob/master/main/highint5.S)
   
 
-**Stałe warte wspomnienia:**
+### Stałe warte wspomnienia:
 
 .literal używamy idk jak więc **<mark>TODO</mark>**
 
@@ -210,11 +207,11 @@ GPIO (general purpose i/o) :)
 .literal GPIO_NUM_2, (1<<2)                   # GPIO 2
 ```
 
-**Jak ustawiamy stany?**
+### Jak ustawiamy stany?
+
+Stała (constant value) (0x3FF44008) nie mieści się na 12-bitach, tzn. nie możemy użyć **movi**, używamy **l32r**: [What does a dangerous relocation error mean? - Stack Overflow](https://stackoverflow.com/questions/19532826/what-does-a-dangerous-relocation-error-mean)
 
 W taki sposób ustawiamy **LOW** na pinie:
-
-Stała (constant value) (0x3FF44008) nie mieści się na 12-bitach, tzn. nie możemy użyć **movi**, używamy **l32r**: [c++ - What does a dangerous relocation error mean? - Stack Overflow](https://stackoverflow.com/questions/19532826/what-does-a-dangerous-relocation-error-mean)
 
 ```
 .text
@@ -235,14 +232,16 @@ mwait:
 
 # WS2812B Driver
 
-**Useful links:**
+Useful links:
 
+- https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf - Documentation
+  
 - [WS2812 Tutorial: Protocol for the WS2812B Programmable LED | Arrow.com](https://www.arrow.com/en/research-and-events/articles/protocol-for-the-ws2812b-programmable-led)
   
 - [NeoPixels Revealed: How to (not need to) generate precisely timed signals | josh.com](https://wp.josh.com/2014/05/13/ws2812-neopixels-are-not-so-finicky-once-you-get-to-know-them/)
   
-- https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf Documentation
-  
+
+### Timing table
 
 | Func | Description | Time | ±   |
 | --- | --- | --- | --- |
